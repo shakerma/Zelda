@@ -1,14 +1,15 @@
 package main;
 
-import java.awt.Graphics;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Random;
-import java.awt.Color;
-import javax.swing.JPanel;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
-public class GameScreen extends JPanel{
-	private Random random;
+public class Game extends JFrame{
+
+	private GameScreen gameScreen;
 	private BufferedImage img;
 	private long lastTime;
 	private int frames;
@@ -16,57 +17,50 @@ public class GameScreen extends JPanel{
 	private double timePerFrame;
 	private long lastFrame;
 
-	private ArrayList <BufferedImage> sprites = new ArrayList();
+	public Game() {
 
-	public GameScreen(BufferedImage img) {
-		this.img=img;
-		random = new Random();
-		loadSprites();
+		importImg();
 
-		timePerFrame = 1000000000.0/60.0; 
-
-	}
-
-	private void loadSprites() {
-		for (int y=0;y<10;y++) {
-			for(int x = 0;x<10;x++) {
-				sprites.add(img.getSubimage(x*32, y*32, 32, 32));
-			}
-		}
-	}
-	public void paintComponent(Graphics g) {
-
-		super.paintComponent(g);
-		//		g.drawImage(sprites.get(19),0,0,null);
-		//		g.drawImage(img.getSubimage(32*9, 32, 32, 32), 0, 0, null);
-		for (int y=0;y<20;y++) {
-			for(int x = 0;x<20;x++) {
-				g.drawImage(sprites.get(getRandInt()),x*32 ,y*32, null);
-			}
-		}
-
-		callFPS();
+		setSize(800,800);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
+		Dimension j = getSize();
+		j.getWidth();
+		gameScreen = new GameScreen(img);
+		add(gameScreen);
+		setVisible(true);
 
 	}
-
-
-	private void callFPS() {
-		frames++;
-		if(System.currentTimeMillis() - lastTime>=1000) {
-			System.out.println("FPS:"+ frames);
-			frames=0;
-			lastTime=System.currentTimeMillis();
+	private void importImg() {
+		InputStream is = getClass().getResourceAsStream("/s.png");	
+		try {
+			img = ImageIO.read(is);
+		}catch(IOException e) {
+			e.printStackTrace();
 		}
 
 	}
-	private int getRandInt() {
-		return random.nextInt(100);
+	//	private void loopGame() {
+	//		while(true) {
+	//		if(System.nanoTime()-lastTime>= timePerFrame) {
+	//			lastFrame=System.nanoTime();
+	//			repaint();
+	//		}
+	//		}
+	//	}
+
+	public int getWidth() {
+		Dimension j = getSize();
+		return (int) j.getWidth();
 	}
-	private Color getRanColor() {
-		int r =random.nextInt(256);
-		int g =random.nextInt(256);
-		int b =random.nextInt(256);
-		return new Color(r,g,b);
+	public int getHeight() {
+		Dimension j = getSize();
+		return (int) j.getHeight();
+	}
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Game game = new Game();
+		//	game.loopGame();
 	}
 
 }
