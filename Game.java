@@ -10,7 +10,9 @@ import javax.swing.JFrame;
 public class Game extends JFrame{
 
 	private GameScreen gameScreen;
-	private BufferedImage img;
+	private BufferedImage link;
+	private BufferedImage world;
+
 	private long lastTime;
 	private int frames;
 
@@ -21,20 +23,23 @@ public class Game extends JFrame{
 
 		importImg();
 
-		setSize(800,800);
+		setSize(600,600);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		Dimension j = getSize();
 		j.getWidth();
-		gameScreen = new GameScreen(img);
+		gameScreen = new GameScreen(link,world);
 		add(gameScreen);
 		setVisible(true);
 
 	}
 	private void importImg() {
-		InputStream is = getClass().getResourceAsStream("/s.png");	
+		InputStream is = getClass().getResourceAsStream("/Link.png");	
+		InputStream lol = getClass().getResourceAsStream("/map.png");	
+
 		try {
-			img = ImageIO.read(is);
+			link = ImageIO.read(is);
+			world = ImageIO.read(lol);
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
