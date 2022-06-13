@@ -20,18 +20,24 @@ public class GameScreen extends JPanel implements ActionListener, KeyListener{
 	//	private double timePerFrame;
 	//	private long lastFrame;
 	private Game game;
-	private BufferedImage img;
+	private BufferedImage link;
+	private BufferedImage world;
+
 	Timer tm = new Timer(5, this);
 	int x=0, y=0, velx=0, vely=0;
-	int direction=0;
+	int direction=0,screennumber=0;
 
 	private ArrayList <BufferedImage> sprites = new ArrayList();
+	private ArrayList <BufferedImage> screens = new ArrayList();
 
-	public GameScreen(BufferedImage img) {
-		this.img=img;
+
+	public GameScreen(BufferedImage link, BufferedImage world) {
+		this.link=link;
+		this.world=world;
 		//		random = new Random();
 		loadSprites();
 		//		timePerFrame = 1000000000.0/60.0; 
+		loadScreens();
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
@@ -40,16 +46,27 @@ public class GameScreen extends JPanel implements ActionListener, KeyListener{
 
 
 	private void loadSprites() {
+		//walking
+		sprites.add(link.getSubimage(25, 0,30, 30));//down
+		sprites.add(link.getSubimage(50, 0,30, 30));//left
+		sprites.add(link.getSubimage(90, 0,30, 30));//up
+		sprites.add(link.getSubimage(120, 0,30, 30));//right
+		//attacking
+		sprites.add(link.getSubimage(150, 0,25, 40));//down
+		sprites.add(link.getSubimage(170, 0,40,30 ));//left
+		sprites.add(link.getSubimage(210, 0,20, 40));//up
+		sprites.add(link.getSubimage(230, 0,35, 30));//right	
 
-		sprites.add(img.getSubimage(0, 0,120, 130));
-		sprites.add(img.getSubimage(0, 130,120, 130));
-		sprites.add(img.getSubimage(0, 260,120, 130));
-		sprites.add(img.getSubimage(0, 390,120, 130));
-
-
+	}
+	private void loadScreens() {
+		//top level 0 - 11
+		for(int i =0; i<11;i++) {
+			screens.add(world.getSubimage(i*350, 0,500,350));	
+		}
 	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		g.drawImage(screens.get(screennumber),0 ,0,500,500, null);
 		g.drawImage(sprites.get(direction),x ,y, null);
 		tm.start();
 		//		callFPS();
@@ -79,7 +96,10 @@ public class GameScreen extends JPanel implements ActionListener, KeyListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		//moving
 		int c = e.getKeyCode();
+		int previous=0;
+
 		if(c==KeyEvent.VK_LEFT) {
 			velx=-1;
 			vely =0;
@@ -102,7 +122,29 @@ public class GameScreen extends JPanel implements ActionListener, KeyListener{
 			vely=1;
 			direction =0;
 		}
+		//attacking
+		if(c== KeyEvent.VK_A && (direction==1||direction ==5)) {
+			velx=-1;
+			vely =0;
+			direction = 5;		}
+		if(c== KeyEvent.VK_A && (direction==3|| direction==7) ){
+			velx=1;
+			vely=0;
+			direction = 7;
 
+		}
+		if(c== KeyEvent.VK_A && (direction==2||direction ==6)) {
+			velx=0;
+			vely=-1;
+			direction = 6;
+
+		}
+		if(c== KeyEvent.VK_A && (direction==0||direction==4)){
+			velx=0;
+			vely=1;
+			direction =4;
+		}
+		previous=c;
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -119,19 +161,27 @@ public class GameScreen extends JPanel implements ActionListener, KeyListener{
 		//		System.out.println(game.getWidth());
 		if( x<0) {
 			velx=0;
-			x=0;
+			x=440;
+			if(screennumber==0) {
+				return;
+			}
+			screennumber-=1;
 		}
 		if( y<0) {
 			vely=0;
 			y=0;
 		}
-		if( y> 645) {
+		if( y> 450) {
 			vely=0;
-			y=645;
+			y=450;
 		}
-		if( x> 700) {
+		if( x> 450) {
 			velx=0;
-			x=700;
+			x=10;
+			if(screennumber==11) {
+				return;
+			}
+			screennumber+=1;
 		}
 		x+=velx;		
 		y+=vely;
@@ -139,3 +189,4 @@ public class GameScreen extends JPanel implements ActionListener, KeyListener{
 	}
 
 }
+
